@@ -3,6 +3,83 @@
 https://goddaehee.tistory.com/212
 https://goddaehee.tistory.com/211?category=367461
 
+---
+단위 테스트
+
+▶ @WebMvcTest
+ - MVC를 위한 테스트, 컨트롤러가 예상대로 동작하는지 테스트하는데 사용된다.
+(To test whether Spring MVC controllers are working as expected, use the @WebMvcTest annotation.)
+
+ - @WebMvcTest 어노테이션을 사용시 다음 내용만 스캔 하도록 제한한다. (보다 가벼운 테스팅이 가능하다.)
+@Controller, @ControllerAdvice, @JsonComponent, Converter, GenericConverter, Filter, HandlerInterceptor, WebMvcConfigurer, HandlerMethodArgumentResolver
+
+※ 자동 구성 설정정보 리스트는 다음 공식 문서에서 확인하며 더 최신화되고, 정확할 것이다.
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/appendix-test-auto-configuration.html#test-auto-configuration
+
+ - MockBean, MockMVC를 자동 구성하여 테스트 가능하도록 한다.
+ - Spring Security의 테스트도 지원 한다.
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/howto.html#howto-use-test-with-spring-security
+
+ 
+
+ - @WebMvcTest를 사용하기 위해 테스트할 특정 컨트롤러 클래스를 명시 하도록 한다.
+
+ 
+
+● 장점
+
+ - WebApplication 관련된 Bean들만 등록하기 때문에 통합 테스트보다 빠르다.
+
+ - 통합 테스트를 진행하기 어려운 테스트를 진행 가능하다.
+
+ex) 결제 모듈 API를 콜하며 안되는 상황에서 Mock을 통해 가짜 객체를 만들어 테스트 가능.
+
+ 
+
+● 단점
+
+ - 요청부터 응답까지 모든 테스트를 Mock 기반으로 테스트하기 때문에 실제 환경에서는 제대로 동작하지 않을 수 있다.
+
+ ▶ @WebFluxTest
+ - 스프링 웹플럭스에 대한 이해도가 너무 낮아서 이부분은 그냥 공식 문서에 있는 내용 그대로만 발췌해서 남겨놓고 추후 자세히 포스팅 해보려 한다.
+ - 비동기-논블록킹 리액티브 개발에 사용되며 서비스간 호출이 많은 마이크로 아키텍처에 적합 하다.
+
+ex) @WebFluxTest예제 (공식 문서의 테스트 예제)
+
+▶ @DataJpaTest
+ - JPA 관련된 설정만 로드합니다.
+ - 설정이 정상적인지, JPA를 사용하서 데이터를 올바르게 조회, 생성, 수정, 삭제 하는지 등의 테스트가 가능하다.
+ - @Entity 클래스를 스캔하여 스프링 데이터 JPA 저장소를 구성한다. ( 다른 컴포넌트를 스캔하지 않음 )
+ - @Transactional 어노테이션을 포함하고 있기 때문에 따로 선언하지 않아도 됨
+   @Transactional 기능이 필요하지 않으면 @Transactional(propagation = Propagation.NOT_SUPPORTED) 설정
+ - 기본적으로 in-memory embedded database에 대한 테스트를 진행한다.
+ - real database를 사용하고자 하는 경우@AutoConfigureTestDatabase 사용하면 된다.
+   @AutoConfigureTestDatabase Default 설정 값은 Any이다. (기본적으로 내장된 데이터소스를 사용한다).
+   @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)을 지정하면 실제 디비도 사용 가능하며,
+   @ActiveProfiles("test") 등의 프로파일이 설정도 가능하다.
+
+@JdbcTest는 JPA를 사용하지 않고 기본 데이터베이스의 테스트 할 때 사용한다.
+
+▶ @RestClientTest
+참고) 공식 doc 
+You can use the @RestClientTest annotation to test REST clients.
+By default, it auto-configures Jackson, GSON, and Jsonb support, configures a RestTemplateBuilder, and adds support for MockRestServiceServer.
+Regular @Component beans are not loaded into the ApplicationContext.
+
+@RestClientTest 을 사용하여 REST 클라이언트 테스트가 가능하다.
+REST 통신의 JSON 형식이 예상대로 응답을 반환하는지 등을 테스트 합니다.
+예를 들면, Apache HttpClient나 Spring의 RestTemplate을 사용하여 외부 서버에 웹 요청을 보내는 경우에 이에 응답할 Mock서버를 만드는 것이라고 생각하면 된다.
+
+▶ @JsonTest
+ - @JsonTest는 JSON serialization과 deserialization 테스트를 편하게 할 수 있다.
+ - JSON의 직렬화, 역직렬화를 수행하는 라이브러인 Gson과 Jackson의 테스트를 제공한다.
+(JacksonTester, GsonTest, BasicJsonTester)
+
+
+
+---
 1. 통합 테스트
 1) 개요
  - 실제 운영 환경에서 사용될 클래스들을 통합하여 테스트 한다.
